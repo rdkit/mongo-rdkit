@@ -1,2 +1,2 @@
 # mongo-rdkit
-GSoC 2020 project to integration the RDKit and MongoDb
+GSoC 2020 project to integrate the RDKit and MongoDb
