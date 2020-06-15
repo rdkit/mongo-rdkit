@@ -1,6 +1,6 @@
 import pymongo
 from pymongo import MongoClient
-from .utils import RegistrationUtils
+from .utils import *
 
 def createFromHostPort(dbname, host=None, port=None):
     """
@@ -16,7 +16,7 @@ def createFromHostPort(dbname, host=None, port=None):
     client = MongoClient(host, port)
     db = client[dbname]
     collection = db['registration']
-    collection.insert_one(RegistrationUtils.standard_setting)
+    collection.insert_one(STANDARD_SETTING)
     return db
 
 def createFromURL(dbname, url=None):
@@ -29,5 +29,5 @@ def createFromURL(dbname, url=None):
     client = MongoClient(url)
     db = client[dbname]
     collection = db['registration']
-    collection.insert_one(RegistrationUtils.standard_setting)
+    collection.insert_one(STANDARD_SETTING)
     return db
