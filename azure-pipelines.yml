@@ -17,27 +17,23 @@ jobs:
     number_of_cores: nproc
     python_name: python37
   steps:
-  - script: |
-      python -m pip install --upgrade pip
-      pip install -r requirements.txt
-    displayName: 'Install dependencies'
   - bash: |
       source ${CONDA}/etc/profile.d/conda.sh
       sudo chown -R ${USER} ${CONDA}
       conda config --set always_yes yes --set changeps1 no
       conda update -q conda
       conda info -a
-      conda create --name rdkit_build $(compiler) cmake \
+      conda create --name py37_rdkit_beta $(compiler) cmake \
           boost-cpp=$(boost_version) boost=$(boost_version) \
           py-boost=$(boost_version) libboost=$(boost_version) \
           numpy matplotlib pillow eigen pandas \
           sphinx recommonmark jupyter
-      conda activate rdkit_build
+      conda activate py37_rdkit_beta
       conda install -c rdkit nox cairo
     displayName: Setup build environment
   - bash: |
       source ${CONDA}/etc/profile.d/conda.sh
-      conda activate rdkit_build
+      conda activate py37_rdkit_beta
       mkdir build && cd build && \
       cmake .. \
       -DCMAKE_BUILD_TYPE=Release \
@@ -65,10 +61,14 @@ jobs:
     displayName: Configure build (Run CMake)
   - bash: |
       source ${CONDA}/etc/profile.d/conda.sh
-      conda activate rdkit_build
+      conda activate py37_rdkit_beta
       cd build
       make -j $( $(number_of_cores) ) install
     displayName: Build
+  - bash:  |
+      conda activate py37_rdkit_beta
+      conda env update --prefix ./env --file py37_rdkit_beta.yml  --prune
+    displayName: Install additional dependencies
   - script: |
       pip install pytest
       pip install pytest-cov
