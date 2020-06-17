@@ -17,4 +17,11 @@ jobs:
     number_of_cores: nproc
     python_name: python37
   steps:
-  - template: linux_build.yml
+    - bash: echo "##vso[task.prependpath]$CONDA/bin"
+      displayName: Add conda to PATH
+    - bash: conda env create --quiet --force --file py37_rdkit_beta.yml
+      displayName: Create conda environment
+    - bash: |
+        source activate py37_rdkit_beta
+        pytest tests --doctest-modules --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html
+      displayName: Test with pytest
