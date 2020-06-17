@@ -19,7 +19,7 @@ jobs:
   steps:
     - bash: echo "##vso[task.prependpath]$CONDA/bin"
       displayName: Add conda to PATH
-    - bash: conda env create --quiet --force --file py37_rdkit_beta.yml
+    - bash: conda env create --quiet --force --file env.yml
       displayName: Create conda environment
     - bash: |
         source activate py37_rdkit_beta
