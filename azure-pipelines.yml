@@ -23,7 +23,6 @@ jobs:
       displayName: Create conda environment
     - bash: |
         source activate py37_rdkit_beta
-        cd /
-        export PYTHONPATH="$PWD/mongordkit"
+        export PYTHONPATH="/mongordkit"
         pytest
       displayName: Test with pytest
