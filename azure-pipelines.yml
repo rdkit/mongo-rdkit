@@ -23,7 +23,7 @@ jobs:
         echo $PYTHONPATH
         pytest
       displayName: Test with pytest
-- job: macOS X Mojave 10.14
+- job: macOS-10.14
   timeoutInMinutes: 90
   pool:
     vmImage: macOS-10.14
