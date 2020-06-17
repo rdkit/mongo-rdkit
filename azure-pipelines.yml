@@ -24,7 +24,7 @@ jobs:
     - bash: |
         source activate py37_rdkit_beta
         echo $PYTHONPATH
-        export PYTHONPATH="$PWD/mongordkit"
+        export PYTHONPATH="$PWD"
         echo $PYTHONPATH
         pytest
       displayName: Test with pytest
