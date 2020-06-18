@@ -14,7 +14,10 @@ jobs:
   steps:
     - bash: echo "##vso[task.prependpath]$CONDA/bin"
       displayName: Add conda to PATH
-    - bash: conda env create --quiet --force --file env.yml
+    - bash: |
+        conda env create --quiet --force --file env.yml
+        source activate py37_rdkit_beta
+        conda install -y -c rdkit rdkit=2020.03.1
       displayName: Create conda environment
     - bash: |
         source activate py37_rdkit_beta
@@ -28,7 +31,9 @@ jobs:
   pool:
     vmImage: macOS-10.14
   steps:
-    - bash: echo "##vso[task.prependpath]$CONDA/bin"
+    - bash: |
+        echo "##vso[task.prependpath]$CONDA/bin"
+        sudo chown -R $USER $CONDA
       displayName: Add conda to PATH
     - bash: conda env create --quiet --force --file env.yml
       displayName: Create conda environment
