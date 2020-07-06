@@ -4,6 +4,7 @@ import sys
 from pathlib import Path
 import mongordkit
 import pymongo
+import pymongo.errors
 import rdkit
 from rdkit import Chem
 import mongomock
@@ -56,9 +57,28 @@ def setupPythonDB(sdf):
 
 def setupMongoDB():
     """
-    WARNING: THIS TEST DIRECTLY MODIFIES YOUR LOCAL MONGODB INSTANCE.
+    WARNING: THIS DIRECTLY MODIFIES YOUR LOCAL MONGODB INSTANCE.
     """
     client = pymongo.MongoClient()
+    db = client.db
+    db.molecules.drop()
+    db.mfp_counts.drop()
+    return client.db
+
+
+def checkMongoDB():
+    try:
+        pymongo.MongoClient(serverSelectionTimeoutMS=50).server_info()
+        return True
+    except pymongo.errors.ServerSelectionTimeoutError:
+        return False
+
+
+def setupMockDB():
+    """
+    Set up a mock database for testing using MongoMock.
+    """
+    client = mongomock.MongoClient()
     db = client.db
     db.molecules.drop()
     db.mfp_counts.drop()
