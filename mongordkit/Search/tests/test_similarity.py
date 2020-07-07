@@ -48,15 +48,18 @@ def test_similarityAccuracy():
             assert sorted(search_python) == sorted(search_mongo)
 
 
-@pytest.mark.skipif(utils.checkMongoDB() == False, reason="Skipped because there is no Mongo instance.")
-def test_similarityAccuracyAggregate():
+@pytest.mark.mongo
+def test_similarityAccuracyAggregate(mongoURI):
     """
     Tests for basic accuracy against a brute-force constructed Python 'database'
     at thresholds 0.2, 0.4, 0.6, 0.8, and 1. This test is relatively long and
     will modify your local MongoDB instance.
     """
     db_python = utils.setupPythonDB('data/test_data/first_200.props.sdf')
-    db_mongo = utils.setupMongoDB()
+    if mongoURI == 'default':
+        db_mongo = utils.setupMongoDB()
+    else:
+        db_mongo = utils.setupMongoDB(mongoURI)
     write.writeFromSDF(db_mongo, 'data/test_data/first_200.props.sdf', 'test')
     similarity.addMorganFingerprints(db_mongo)
     thresholds = [0.2, 0.4, 0.6, 0.8, 1]
@@ -88,14 +91,17 @@ def test_similarityProgression():
             last = search_mongo
 
 
-@pytest.mark.skipif(utils.checkMongoDB() == False, reason="Skipped because there is no Mongo instance.")
-def test_similarityAggregateProgression():
+@pytest.mark.mongo
+def test_similarityAggregateProgression(mongoURI):
     """
     Tests that decreasing similarity thresholds return increasing result lists. This
     test will modify your local MongoDB instance.
     """
     db_python = utils.setupPythonDB('data/test_data/first_200.props.sdf')
-    db_mongo = utils.setupMongoDB()
+    if mongoURI == 'default':
+        db_mongo = utils.setupMongoDB()
+    else:
+        db_mongo = utils.setupMongoDB(mongoURI)
     write.writeFromSDF(db_mongo, 'data/test_data/first_200.props.sdf', 'test')
     similarity.addMorganFingerprints(db_mongo)
     thresholds = [1, 0.8, 0.6, 0.4, 0.2]

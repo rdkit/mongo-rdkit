@@ -55,20 +55,20 @@ def setupPythonDB(sdf):
     return data
 
 
-def setupMongoDB():
+def setupMongoDB(mongoURI=None):
     """
     WARNING: THIS DIRECTLY MODIFIES YOUR LOCAL MONGODB INSTANCE.
     """
-    client = pymongo.MongoClient()
+    client = pymongo.MongoClient(mongoURI)
     db = client.db
     db.molecules.drop()
     db.mfp_counts.drop()
     return client.db
 
 
-def checkMongoDB():
+def checkMongoDB(mongoURI=None):
     try:
-        pymongo.MongoClient(serverSelectionTimeoutMS=50).server_info()
+        pymongo.MongoClient(mongoURI, serverSelectionTimeoutMS=50).server_info()
         return True
     except pymongo.errors.ServerSelectionTimeoutError:
         return False
