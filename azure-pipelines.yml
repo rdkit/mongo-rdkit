@@ -44,19 +44,4 @@ jobs:
         echo $PYTHONPATH
         pytest
       displayName: Test with pytest
-- job: windows_2019
-  timeoutInMinutes: 90
-  pool:
-    vmImage: windows-2019
-  steps:
-    - powershell: Write-Host "##vso[task.prependpath]$env:CONDA\Scripts"
-      displayName: Add conda to PATH
-    - script: conda env create --quiet --file env.yml
-      displayName: Create Anaconda environment
-    - script: |
-        call activate py37_rdkit_beta
-        set PATH=C:\Program Files\Python 3.8;%PATH%
-        C:\>set PYTHONPATH=%PYTHONPATH%;%cd%
-        pytest
-      displayName: Test with pytest
 

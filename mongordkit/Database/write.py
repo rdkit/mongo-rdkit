@@ -5,7 +5,7 @@ from rdkit.Chem import rdMolHash
 from rdkit.Chem import rdinchi
 from .utils import *
 
-def writeFromSDF(db, sdf, src, reg_option="standard_setting", index_option="inchikey",chunk_size=100):
+def writeFromSDF(db, sdf, src, reg_option="standard_setting", index_option="inchikey", chunk_size=100, limit=None):
     """
     Writes to database instance DB the
     contents of an SDF file SDF from SRC in a collection called molecules.
@@ -24,7 +24,7 @@ def writeFromSDF(db, sdf, src, reg_option="standard_setting", index_option="inch
     :return: The total number of molecules inserted into the collection.
     """
     molecules = db.molecules
-
+    print('populating mongodb collection with compounds from chembl...')
     # This is placeholder code for when more registration options exist.
     if reg_option is not "standard_setting" and "registration" in db.list_collection_names():
         settings = db.registration.find_one({"$name": reg_option})
@@ -56,12 +56,18 @@ def writeFromSDF(db, sdf, src, reg_option="standard_setting", index_option="inch
         chunk.append(document)
         if len(chunk) == chunk_size:
             molecules.insert_many(chunk)
-            inserted += 100
+            inserted += chunk_size
             chunk = []
+            print('inserted chunk...')
+        if limit is not None and inserted > limit:
+            break
     if len(chunk) != 0:
         molecules.insert_many(chunk)
     inserted += len(chunk)
+    print("{} molecules successfully imported".format(inserted))
     return inserted
+
+
 
 def addSetting(db, setting):
     """
