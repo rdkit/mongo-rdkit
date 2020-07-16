@@ -16,7 +16,8 @@ def createFromHostPort(dbname, host=None, port=None):
     client = MongoClient(host, port)
     db = client[dbname]
     collection = db['registration']
-    collection.insert_one(STANDARD_SETTING)
+    if db.registration.count_documents({'name': 'STANDARD'}, limit=1) == 0:
+        collection.insert_one(STANDARD_SETTING)
     return db
 
 def createFromURL(dbname, url=None):
@@ -28,6 +29,7 @@ def createFromURL(dbname, url=None):
     """
     client = MongoClient(url)
     db = client[dbname]
-    collection = db['registration']
-    collection.insert_one(STANDARD_SETTING)
+    collection = db.registration
+    if db.registration.count_documents({'name': 'STANDARD'}, limit=1) == 0:
+        collection.insert_one(STANDARD_SETTING)
     return db

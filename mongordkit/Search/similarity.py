@@ -6,6 +6,25 @@ from rdkit.Chem import AllChem
 from mongordkit import Database
 
 
+def SimSearchNaive(mol, db, threshold=0.8):
+    """
+    Naive implementation of similarity search, without
+    any fingerprint screening whatsoever.
+    :param pattern: An rdmol object that represents a desired substructure pattern.
+    :param db: The database over which to search. Must have a molecules collection.
+    :param threshold: Tanimoto threshold for similarity. Defaults to 0.8
+    :return: A list of SMILES that fulfill threshold, along with their tanimoto scores.
+    """
+    results = []
+    qfp = list(AllChem.GetMorganFingerprintAsBitVect(mol, 2, nBits=1024).GetOnBits())
+    for molDoc in db.molecules.find():
+        mfp = list((AllChem.GetMorganFingerprintAsBitVect(Chem.Mol(molDoc['rdmol']), 2, nBits=1024).GetOnBits()))
+        tanimoto = calc_tanimoto(qfp, mfp)
+        if tanimoto >= threshold:
+            results.append([tanimoto, molDoc['smiles']])
+    return results
+
+
 def addMorganFingerprints(db, radius=2, length=1024):
     """Add Morgan fingerprints with radius RADIUS and
     LENGTH bits to all molecules in a database DB. Creates
@@ -14,7 +33,7 @@ def addMorganFingerprints(db, radius=2, length=1024):
     each Morgan fingerprint is. This aids in similarity search.
     """
     for m in db.molecules.find():
-        bit_vector = list((AllChem.GetMorganFingerprintAsBitVect(Chem.Mol(m['rdmol']), 2, nBits=1024).GetOnBits()))
+        bit_vector = list((AllChem.GetMorganFingerprintAsBitVect(Chem.Mol(m['rdmol']), radius, length).GetOnBits()))
         count = len(bit_vector)
         db.molecules.update_one({'_id': m['_id']}, {'$set': {'morgan_fp': {'bits': bit_vector,
                                                                            'count': count}}})

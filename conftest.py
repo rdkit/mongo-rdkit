@@ -5,7 +5,7 @@ import pymongo.errors
 
 def pytest_addoption(parser):
     parser.addoption(
-        "--server", action="store", default=None, help="enter a MongoURI server or 'default' to use localhost.'"
+        "--server", action="store", default=None, help="enter a MongoURI or 'local' to use localhost."
     )
 
 
@@ -19,7 +19,7 @@ def mongoURI(request):
 
 
 def pytest_collection_modifyitems(config, items):
-    if config.getoption("--server") == "default":
+    if config.getoption("--server") == "local":
         try:
             pymongo.MongoClient(serverSelectionTimeoutMS=100).server_info()
             return
@@ -28,7 +28,7 @@ def pytest_collection_modifyitems(config, items):
             for item in items:
                 if "mongo" in item.keywords:
                     item.add_marker(skip_mongo)
-    elif config.getoption("--server") and config.getoption("--server") != "default":
+    elif config.getoption("--server") and config.getoption("--server") != "local":
         try:
             pymongo.MongoClient(config.getoption("--server"), serverSelectionTimeoutMS=100).server_info()
             return

@@ -58,7 +58,6 @@ def writeFromSDF(db, sdf, src, reg_option="standard_setting", index_option="inch
             molecules.insert_many(chunk)
             inserted += chunk_size
             chunk = []
-            print('inserted chunk...')
         if limit is not None and inserted > limit:
             break
     if len(chunk) != 0:

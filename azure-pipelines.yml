@@ -16,11 +16,11 @@ jobs:
       displayName: Add conda to PATH
     - bash: |
         conda env create --quiet --force --file env.yml
-        source activate py37_rdkit_beta
+        source activate mongo_rdkit
         conda install -y -c rdkit rdkit=2020.03.1
       displayName: Create conda environment
     - bash: |
-        source activate py37_rdkit_beta
+        source activate mongo_rdkit
         echo $PYTHONPATH
         export PYTHONPATH="$PWD"
         echo $PYTHONPATH
@@ -38,10 +38,25 @@ jobs:
     - bash: conda env create --quiet --force --file env.yml
       displayName: Create conda environment
     - bash: |
-        source activate py37_rdkit_beta
+        source activate mongo_rdkit
         echo $PYTHONPATH
         export PYTHONPATH="$PWD"
         echo $PYTHONPATH
         pytest
       displayName: Test with pytest
+- job: Windows_
+  timeoutInMinutes: 90
+  pool:
+    vmImage: windows-2019
+  steps:
+    - powershell: Write-Host "##vso[task.prependpath]$env:CONDA\Scripts"
+      displayName: Add conda to PATH
+    - script: conda env create --quiet --force --file env.yml
+      displayName: Create Anaconda environment
+    - script: set PYTHONPATH=%PYTHONPATH%;C:\cd
+      displayName: Set PYTHONPATH correctly
+    - script: |
+        call activate mongo_rdkit
+        pytest
+      displayName: Run pytest
 

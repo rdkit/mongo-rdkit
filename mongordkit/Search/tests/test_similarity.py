@@ -6,6 +6,7 @@ from rdkit import Chem
 from mongordkit.Database import write
 from mongordkit.Search import similarity
 from mongordkit.Search.tests import utils
+import time
 
 sys.path.append(Path('.').resolve().parent.parent.parent)
 
@@ -35,6 +36,7 @@ def test_similarityAccuracy():
     Tests for basic accuracy against a brute-force constructed Python 'database'
     at thresholds 0.2, 0.4, 0.6, 0.8, and 1. This test is implemented using MongoMock.
     """
+
     db_python = utils.setupPythonDB('data/test_data/first_200.props.sdf')
     db_mongo = utils.setupMockDB()
     write.writeFromSDF(db_mongo, 'data/test_data/first_200.props.sdf', 'test')
