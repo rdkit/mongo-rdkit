@@ -15,9 +15,5 @@ def test_registrationPresent():
     collection.insert_one(mongordkit.Database.utils.STANDARD_SETTING)
     assert 'registration' in db.list_collection_names()
 
-def test_create():
-    hdb = create.createFromHostPort('MyDatabase', host=None, port=None)
-    adb = create.createFromURL('MyDatabase', url=None)
-
 
 

@@ -53,7 +53,7 @@ jobs:
       displayName: Add conda to PATH
     - script: conda env create --quiet --force --file env.yml
       displayName: Create Anaconda environment
-    - script: set PYTHONPATH=%PYTHONPATH%;C:\cd
+    - script: set PYTHONPATH=%PYTHONPATH%;C:.
       displayName: Set PYTHONPATH correctly
     - script: |
         call activate mongo_rdkit
