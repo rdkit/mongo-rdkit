@@ -36,7 +36,7 @@ def test_uniqueInsertion():
 
 def test_WriteMolListCount():
     db = setupDB()
-    f = open('../../../data/zinc.frags.500.q.smi')
+    f = open('data/zinc.frags.500.q.smi')
     frags = [Chem.MolFromSmiles(line.split()[0]) for line in f]
     f.close()
     frag_smiles = [Chem.MolToSmiles(rdmol) for rdmol in frags]

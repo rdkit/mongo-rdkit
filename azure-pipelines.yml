@@ -7,43 +7,43 @@ trigger:
 - master
 
 jobs:
-- job: Ubuntu_16_04_x64
-  timeoutInMinutes: 90
-  pool:
-    vmImage: ubuntu-16.04
-  steps:
-    - bash: echo "##vso[task.prependpath]$CONDA/bin"
-      displayName: Add conda to PATH
-    - bash: |
-        conda env create --quiet --force --file env.yml
-        source activate mongo_rdkit
-        conda install -y -c rdkit rdkit=2020.03.1
-      displayName: Create conda environment
-    - bash: |
-        source activate mongo_rdkit
-        echo $PYTHONPATH
-        export PYTHONPATH="$PWD"
-        echo $PYTHONPATH
-        pytest
-      displayName: Test with pytest
-- job: macOS_10_14
-  timeoutInMinutes: 90
-  pool:
-    vmImage: macOS-10.14
-  steps:
-    - bash: |
-        echo "##vso[task.prependpath]$CONDA/bin"
-        sudo chown -R $USER $CONDA
-      displayName: Add conda to PATH
-    - bash: conda env create --quiet --force --file env.yml
-      displayName: Create conda environment
-    - bash: |
-        source activate mongo_rdkit
-        echo $PYTHONPATH
-        export PYTHONPATH="$PWD"
-        echo $PYTHONPATH
-        pytest
-      displayName: Test with pytest
+#- job: Ubuntu_16_04_x64
+#  timeoutInMinutes: 90
+#  pool:
+#    vmImage: ubuntu-16.04
+#  steps:
+#    - bash: echo "##vso[task.prependpath]$CONDA/bin"
+#      displayName: Add conda to PATH
+#    - bash: |
+#        conda env create --quiet --force --file env.yml
+#        source activate mongo_rdkit
+#        conda install -y -c rdkit rdkit=2020.03.1
+#      displayName: Create conda environment
+#    - bash: |
+#        source activate mongo_rdkit
+#        echo $PYTHONPATH
+#        export PYTHONPATH="$PWD"
+#        echo $PYTHONPATH
+#        pytest
+#      displayName: Test with pytest
+#- job: macOS_10_14
+#  timeoutInMinutes: 90
+#  pool:
+#    vmImage: macOS-10.14
+#  steps:
+#    - bash: |
+#        echo "##vso[task.prependpath]$CONDA/bin"
+#        sudo chown -R $USER $CONDA
+#      displayName: Add conda to PATH
+#    - bash: conda env create --quiet --force --file env.yml
+#      displayName: Create conda environment
+#    - bash: |
+#        source activate mongo_rdkit
+#        echo $PYTHONPATH
+#        export PYTHONPATH="$PWD"
+#        echo $PYTHONPATH
+#        pytest
+#      displayName: Test with pytest
 - job: Windows_
   timeoutInMinutes: 90
   pool:
