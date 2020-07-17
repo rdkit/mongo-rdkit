@@ -24,7 +24,7 @@ def SubSearchNaive(pattern, db, chirality=False):
     return results
 
 
-def AddPatternFingerprints(db, length=2048):
+def AddPatternFingerprints(db):
     """
     Adds pattern fingerprints to each molecule-representing document in DB.molecules.
     :param db: A MongoDB database instance that contains a molecules collection.
@@ -33,7 +33,7 @@ def AddPatternFingerprints(db, length=2048):
     """
     for moldoc in db.molecules.find():
         mol = Chem.Mol(moldoc['rdmol'])
-        bit_vector = list(PatternFingerprint(mol, length).GetOnBits())
+        bit_vector = list(PatternFingerprint(mol).GetOnBits())
         count = len(bit_vector)
         db.molecules.update_one({'_id': moldoc['_id']}, {'$set': {'pattern_fp': {'bits': bit_vector,
                                                                                  'count': count}}})
@@ -45,7 +45,7 @@ def SubSearch(pattern, db, chirality=False):
     query_fp = list(PatternFingerprint(pattern).GetOnBits())
     qfp_len = len(query_fp)
     for molDoc in db.molecules.find({'pattern_fp.count': {'$gte': qfp_len},
-                                     'pattern_fp.bits': {'$all': query_fp}
+                                     #'pattern_fp.bits': {'$all': query_fp}
                                      }):
         rdmol = Chem.Mol(molDoc['rdmol'])
         if rdmol.HasSubstructMatch(pattern, useChirality=chirality):

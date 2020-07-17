@@ -57,6 +57,7 @@ jobs:
       displayName: Set PYTHONPATH correctly
     - script: |
         call activate mongo_rdkit
+        python -c "import mongordkit"
         pytest
       displayName: Run pytest
 
