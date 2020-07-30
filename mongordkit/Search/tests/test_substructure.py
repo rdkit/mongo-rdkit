@@ -14,9 +14,9 @@ def test_addPatternFingerprints():
 
 def test_SubSearchAccuracy():
     db_mock = utils.setupMockDB()
-    write.writeFromSDF(db_mock.molecules, '../../../data/test_data/first_200.props.sdf', 'test')
+    write.writeFromSDF(db_mock.molecules, 'data/test_data/first_200.props.sdf', 'test')
     substructure.AddPatternFingerprints(db_mock.molecules)
-    db_python = utils.setupPythonDB('../../../data/test_data/first_200.props.sdf')
+    db_python = utils.setupPythonDB('data/test_data/first_200.props.sdf')
     for i in range(200):
         moldoc = db_python[i]
         pattern = Chem.Mol(moldoc['rdmol'])

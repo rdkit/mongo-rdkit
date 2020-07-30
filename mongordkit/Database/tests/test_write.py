@@ -15,7 +15,7 @@ def setupDB():
 
 def test_writeCount():
     db = setupDB()
-    assert 200 == write.writeFromSDF(db.molecules, '../../../data/test_data/first_200.props.sdf', 'test')
+    assert 200 == write.writeFromSDF(db.molecules, 'data/test_data/first_200.props.sdf', 'test')
 
 def test_invalidIndex():
     with pytest.raises(ValueError):
