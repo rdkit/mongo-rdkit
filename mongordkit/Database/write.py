@@ -37,6 +37,8 @@ def writeFromSDF(mol_collection, sdf, src,
     chunk = []
     inserted = 0
     for rdmol in Chem.ForwardSDMolSupplier(sdf):
+        if limit is not None and inserted >= limit:
+            break
         if rdmol is None:
             continue
         index = hash(rdmol)
@@ -51,16 +53,17 @@ def writeFromSDF(mol_collection, sdf, src,
         }
         # Placeholder for adding setting specific fields to the document.
         chunk.append(document)
-        if limit is not None and inserted > limit:
-            break
+        inserted += 1
         if len(chunk) == chunk_size:
             molecules.insert_many(chunk)
-            inserted += chunk_size
             chunk = []
     if len(chunk) != 0:
-        if limit is None or (inserted + len(chunk) <= limit):
-            molecules.insert_many(chunk)
-    inserted += len(chunk)
+        for i in chunk:
+            if limit is not None and inserted >= limit:
+                break
+            else:
+                molecules.insert_one(i)
+                inserted += 1
     print("{} molecules successfully imported".format(inserted))
     return inserted
 
@@ -91,6 +94,8 @@ def WriteMolList(mol_collection, list, src,
     chunk = []
     inserted = 0
     for rdmol in list:
+        if limit is not None and inserted >= limit:
+            break
         if rdmol is None:
             continue
         index = hash(rdmol)
@@ -105,16 +110,17 @@ def WriteMolList(mol_collection, list, src,
         }
         # Placeholder for adding setting specific fields to the document.
         chunk.append(document)
-        if limit is not None and inserted > limit:
-            break
+        inserted += 1
         if len(chunk) == chunk_size:
             molecules.insert_many(chunk)
-            inserted += chunk_size
             chunk = []
     if len(chunk) != 0:
-        if limit is None or (inserted + len(chunk) <= limit):
-            molecules.insert_many(chunk)
-    inserted += len(chunk)
+        for i in chunk:
+            if limit is not None and inserted >= limit:
+                break
+            else:
+                molecules.insert_one(i)
+                inserted += 1
     print("{} molecules successfully imported".format(inserted))
     return inserted
 

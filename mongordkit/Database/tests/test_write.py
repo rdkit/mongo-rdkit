@@ -15,7 +15,7 @@ def setupDB():
 
 def test_writeCount():
     db = setupDB()
-    assert 200 == write.writeFromSDF(db.molecules, 'data/test_data/first_200.props.sdf', 'test')
+    assert 200 == write.writeFromSDF(db.molecules, '../../../data/test_data/first_200.props.sdf', 'test')
 
 def test_invalidIndex():
     with pytest.raises(ValueError):
@@ -33,6 +33,10 @@ def test_uniqueInsertion():
     write.writeFromSDF(db.molecules, 'data/test_data/first_200.props.sdf', 'test')
     assert 0 == write.writeFromSDF(db.molecules, 'data/test_data/first_200.props.sdf', 'test')
     assert 200 == write.writeFromSDF(db.molecules, 'data/test_data/first_200.props.sdf', 'test', reg_option='standard_setting', index_option='canonical_smiles')
+
+def test_writeLimit():
+    db = setupDB()
+    assert 100 == write.writeFromSDF(db.molecules, 'data/test_data/first_200.props.sdf', 'test', limit=100)
 
 def test_WriteMolListCount():
     db = setupDB()

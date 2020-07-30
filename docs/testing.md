@@ -1,5 +1,5 @@
-# Testing Mongo-rdkit
-Tests for this integration are configured using the [pytest](https://docs.pytest.org/en/stable/contents.html)
+# Testing mongo-rdkit
+Tests for this integration are built using the [pytest](https://docs.pytest.org/en/stable/contents.html)
 testing framework. If you didn't install pytest as part of environment setup, 
 you will have to do so in order to run tests:
 ```
@@ -14,7 +14,7 @@ pytest
 Directory position is important because as of 7/10/20, 
 the tests have explicit file paths to test data in the `/data` directory.
 
-It is likely that with only `pytest` some tests will be skipped. This is because
+By only running `pytest`, some tests will be skipped. This is because
 some tests—for instance, those that involve aggregation pipelines—only work with a functional 
 MongoDB instance. In order to successfully run these tests, we have to pass in
 a MongoDB URI to the testing framework:
@@ -44,6 +44,8 @@ mongordkit
             | test_similarity.py
             | test_substructure.py
 ```
+
+Configurations for the tests are located in `conftest.py`.
 
 
 
