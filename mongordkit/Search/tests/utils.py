@@ -11,23 +11,34 @@ import mongomock
 from rdkit.Chem import AllChem
 from mongordkit.Database import write, utils
 from mongordkit.Search import similarity
+from rdkit.Chem.rdmolops import PatternFingerprint
 
 
 def similaritySearchPython(query_mol, molecules, threshold):
     """
     Takes in a list of molecules and performs a brute force
     similarity search on them with query_mol as query.
-    :param query_mol: The query_molecule, as an rdkit mol.
-    :param molecules: A list of molecules, represented as dictionaries.
-    :return: The resulting similar molecules.
     """
     results = []
-    qfp = list(AllChem.GetMorganFingerprintAsBitVect(query_mol, 2, nBits=1024).GetOnBits())
+    qfp = list(AllChem.GetMorganFingerprintAsBitVect(query_mol, 2, nBits=2048).GetOnBits())
     for mol in molecules:
-        mfp = list(AllChem.GetMorganFingerprintAsBitVect(Chem.Mol(mol['rdmol']), 2, nBits=1024).GetOnBits())
+        mfp = list(AllChem.GetMorganFingerprintAsBitVect(Chem.Mol(mol['rdmol']), 2, nBits=2048).GetOnBits())
         tanimoto = calc_tanimoto(qfp, mfp)
         if calc_tanimoto(qfp, mfp) >= threshold:
             results.append([tanimoto, mol['smiles']])
+    return results
+
+
+def SubSearchPython(pattern, molecules):
+    """
+    Takes in a list of molecules MOLECULES and performs a brute force
+    substructure search on them with pattern PATTERN as query.
+    """
+    results = []
+    for moldoc in molecules:
+        mol = Chem.Mol(moldoc['rdmol'])
+        if mol.HasSubstructMatch(pattern):
+            results.append(moldoc['smiles'])
     return results
 
 
@@ -60,10 +71,9 @@ def setupMongoDB(mongoURI=None):
     WARNING: THIS DIRECTLY MODIFIES YOUR LOCAL MONGODB INSTANCE.
     """
     client = pymongo.MongoClient(mongoURI)
-    db = client.db
-    db.molecules.drop()
-    db.mfp_counts.drop()
-    return client.db
+    client.drop_database('pytest_db')
+    db = client['pytest_db']
+    return db
 
 
 def checkMongoDB(mongoURI=None):

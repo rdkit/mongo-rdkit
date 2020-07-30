@@ -14,6 +14,7 @@ def canonicalHash(m):
     return rdMolHash.MolHash(m, rdMolHash.HashFunction.CanonicalSmiles)
 
 STANDARD_SETTING = {
+        'name': 'STANDARD',
         'salt_stripped': True,
         'charge_status': 'neutral',
         'fragments': 'removed',
