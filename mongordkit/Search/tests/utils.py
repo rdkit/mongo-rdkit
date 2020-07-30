@@ -20,9 +20,9 @@ def similaritySearchPython(query_mol, molecules, threshold):
     similarity search on them with query_mol as query.
     """
     results = []
-    qfp = list(AllChem.GetMorganFingerprintAsBitVect(query_mol, 2, nBits=1024).GetOnBits())
+    qfp = list(AllChem.GetMorganFingerprintAsBitVect(query_mol, 2, nBits=2048).GetOnBits())
     for mol in molecules:
-        mfp = list(AllChem.GetMorganFingerprintAsBitVect(Chem.Mol(mol['rdmol']), 2, nBits=1024).GetOnBits())
+        mfp = list(AllChem.GetMorganFingerprintAsBitVect(Chem.Mol(mol['rdmol']), 2, nBits=2048).GetOnBits())
         tanimoto = calc_tanimoto(qfp, mfp)
         if calc_tanimoto(qfp, mfp) >= threshold:
             results.append([tanimoto, mol['smiles']])
@@ -71,10 +71,9 @@ def setupMongoDB(mongoURI=None):
     WARNING: THIS DIRECTLY MODIFIES YOUR LOCAL MONGODB INSTANCE.
     """
     client = pymongo.MongoClient(mongoURI)
-    db = client.db
-    db.molecules.drop()
-    db.mfp_counts.drop()
-    return client.db
+    client.drop_database('pytest_db')
+    db = client['pytest_db']
+    return db
 
 
 def checkMongoDB(mongoURI=None):
