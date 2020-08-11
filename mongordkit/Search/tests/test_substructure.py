@@ -6,7 +6,7 @@ from rdkit import Chem
 
 def test_addPatternFingerprints():
     db = utils.setupMockDB()
-    write.writeFromSDF(db.molecules, 'data/test_data/first_200.props.sdf', 'test')
+    write.WriteFromSDF(db.molecules, 'data/test_data/first_200.props.sdf')
     substructure.AddPatternFingerprints(db.molecules)
     counter = 0
     assert db.molecules.count_documents({"pattern_fp": {"$exists": True}}) == 200
@@ -14,7 +14,7 @@ def test_addPatternFingerprints():
 
 def test_SubSearchAccuracy():
     db_mock = utils.setupMockDB()
-    write.writeFromSDF(db_mock.molecules, 'data/test_data/first_200.props.sdf', 'test')
+    write.WriteFromSDF(db_mock.molecules, 'data/test_data/first_200.props.sdf')
     substructure.AddPatternFingerprints(db_mock.molecules)
     db_python = utils.setupPythonDB('data/test_data/first_200.props.sdf')
     for i in range(200):

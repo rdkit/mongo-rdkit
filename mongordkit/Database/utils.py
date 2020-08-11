@@ -20,7 +20,7 @@ STANDARD_SETTING = {
         'fragments': 'removed',
     }
 
-VALID_IDS = {'inchikey', 'canonical_smiles', 'het_atom_tautomer'}
+VALID_HASHES = {'inchikey', 'canonical_smiles', 'het_atom_tautomer'}
 
 HASH_FUNCTIONS = {'inchikey': rdinchi.MolToInchiKey,
                       'canonical_smiles': canonicalHash,

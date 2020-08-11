@@ -8,41 +8,49 @@ from rdkit import Chem
 sys.path.append(Path('.').resolve().parent.parent)
 
 from mongordkit.Database import write
+from mongordkit.Database import registration
 
 def setupDB():
     client = mongomock.MongoClient()
     return client.db
 
-def test_writeCount():
-    db = setupDB()
-    assert 200 == write.writeFromSDF(db.molecules, 'data/test_data/first_200.props.sdf', 'test')
+class TestWrite:
 
-def test_invalidIndex():
-    with pytest.raises(ValueError):
+    def test_writeCount(self):
+        data_scheme = registration.MolDocScheme()
         db = setupDB()
-        write.writeFromSDF(db.molecules, 'data/test_data/first_200.props.sdf', 'test', reg_option='standard_setting', index_option='canonica_smiles')
+        assert 200 == write.WriteFromSDF(db.molecules, 'data/test_data/first_200.props.sdf', data_scheme)
 
-def test_hashes():
-    db = setupDB()
-    assert 200 == write.writeFromSDF(db.molecules, 'data/test_data/first_200.props.sdf', 'test', 'standard_setting', 'canonical_smiles')
-    db = setupDB()
-    assert 200 == write.writeFromSDF(db.molecules, 'data/test_data/first_200.props.sdf', 'test', 'standard_setting', 'het_atom_tautomer')
+    def test_invalidIndex(self):
+        db = setupDB()
+        data_scheme = registration.MolDocScheme()
+        with pytest.raises(Exception):
+            data_scheme.set_index('moo')
 
-def test_uniqueInsertion():
-    db = setupDB()
-    write.writeFromSDF(db.molecules, 'data/test_data/first_200.props.sdf', 'test')
-    assert 0 == write.writeFromSDF(db.molecules, 'data/test_data/first_200.props.sdf', 'test')
-    assert 200 == write.writeFromSDF(db.molecules, 'data/test_data/first_200.props.sdf', 'test', reg_option='standard_setting', index_option='canonical_smiles')
+    def test_hashes(self):
+        db = setupDB()
+        data_scheme = registration.MolDocScheme()
+        data_scheme.set_index("CanonicalSmiles")
+        assert 200 == write.WriteFromSDF(db.molecules, 'data/test_data/first_200.props.sdf', data_scheme)
+        data_scheme.set_index("MoleculeHashString")
+        assert 200 == write.WriteFromSDF(db.molecules, 'data/test_data/first_200.props.sdf', data_scheme)
 
-def test_writeLimit():
-    db = setupDB()
-    assert 100 == write.writeFromSDF(db.molecules, 'data/test_data/first_200.props.sdf', 'test', limit=100)
+    def test_uniqueInsertion(self):
+        db = setupDB()
+        data_scheme = registration.MolDocScheme()
+        assert 200 == write.WriteFromSDF(db.molecules, 'data/test_data/first_200.props.sdf', data_scheme)
+        assert 0 == write.WriteFromSDF(db.molecules, 'data/test_data/first_200.props.sdf', data_scheme)
 
-def test_WriteMolListCount():
-    db = setupDB()
-    f = open('data/zinc.frags.500.q.smi')
-    frags = [Chem.MolFromSmiles(line.split()[0]) for line in f]
-    f.close()
-    frag_smiles = [Chem.MolToSmiles(rdmol) for rdmol in frags]
-    write.WriteMolList(db.molecules, frags, 'test', chunk_size=100)
-    assert 499 == db.molecules.count_documents({})
+    def test_writeLimit(self):
+        db = setupDB()
+        data_scheme = registration.MolDocScheme()
+        assert 10 == write.WriteFromSDF(db.molecules, 'data/test_data/first_200.props.sdf', data_scheme, limit=10)
+
+    def test_WriteMolListCount(self):
+        db = setupDB()
+        data_scheme = registration.MolDocScheme()
+        f = open('data/zinc.frags.500.q.smi')
+        frags = [Chem.MolFromSmiles(line.split()[0]) for line in f]
+        f.close()
+        write.WriteFromMolList(db.molecules, frags, data_scheme)
+        assert 499 == db.molecules.count_documents({})

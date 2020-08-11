@@ -22,7 +22,7 @@ def test_zeroThreshold():
     """
     db_python = utils.setupPythonDB('data/test_data/first_200.props.sdf')
     db_mongo = utils.setupMockDB()
-    write.writeFromSDF(db_mongo.molecules, 'data/test_data/first_200.props.sdf', 'test')
+    write.WriteFromSDF(db_mongo.molecules, 'data/test_data/first_200.props.sdf')
     similarity.AddMorganFingerprints(db_mongo.molecules, db_mongo.mfp_counts)
 
     mol = Chem.Mol(db_python[0]['rdmol'])
@@ -38,7 +38,7 @@ def test_similarityAccuracy():
     """
     db_python = utils.setupPythonDB('data/test_data/first_200.props.sdf')
     db_mongo = utils.setupMockDB()
-    write.writeFromSDF(db_mongo.molecules, 'data/test_data/first_200.props.sdf', 'test')
+    write.WriteFromSDF(db_mongo.molecules, 'data/test_data/first_200.props.sdf')
     similarity.AddMorganFingerprints(db_mongo.molecules, db_mongo.mfp_counts)
     thresholds = [0.2, 0.4, 0.6, 0.8, 1]
     for t in thresholds:
@@ -61,7 +61,7 @@ def test_similarityAccuracyAggregate(mongoURI):
         db_mongo = utils.setupMongoDB()
     else:
         db_mongo = utils.setupMongoDB(mongoURI)
-    write.writeFromSDF(db_mongo.molecules, 'data/test_data/first_200.props.sdf', 'test')
+    write.WriteFromSDF(db_mongo.molecules, 'data/test_data/first_200.props.sdf')
     similarity.AddMorganFingerprints(db_mongo.molecules, db_mongo.mfp_counts)
     thresholds = [0.2, 0.4, 0.6, 0.8, 1]
     counter = 0
@@ -82,7 +82,7 @@ def test_similarityProgression():
     """
     db_python = utils.setupPythonDB('data/test_data/first_200.props.sdf')
     db_mongo = utils.setupMockDB()
-    write.writeFromSDF(db_mongo.molecules, 'data/test_data/first_200.props.sdf', 'test')
+    write.WriteFromSDF(db_mongo.molecules, 'data/test_data/first_200.props.sdf')
     similarity.AddMorganFingerprints(db_mongo.molecules, db_mongo.mfp_counts)
     thresholds = [1, 0.8, 0.6, 0.4, 0.2]
     for i in range(200):
@@ -106,7 +106,7 @@ def test_similarityAggregateProgression(mongoURI):
         db_mongo = utils.setupMongoDB()
     else:
         db_mongo = utils.setupMongoDB(mongoURI)
-    write.writeFromSDF(db_mongo.molecules, 'data/test_data/first_200.props.sdf', 'test')
+    write.WriteFromSDF(db_mongo.molecules, 'data/test_data/first_200.props.sdf')
     similarity.AddMorganFingerprints(db_mongo.molecules, db_mongo.mfp_counts)
     thresholds = [1, 0.8, 0.6, 0.4, 0.2]
     for i in range(200):
@@ -126,7 +126,7 @@ def test_similarity_accuracy_LSH(mongoURI):
         db_mongo = utils.setupMongoDB()
     else:
         db_mongo = utils.setupMongoDB(mongoURI)
-    write.writeFromSDF(db_mongo.molecules, 'data/test_data/first_200.props.sdf', 'test')
+    write.WriteFromSDF(db_mongo.molecules, 'data/test_data/first_200.props.sdf')
     similarity.AddMorganFingerprints(db_mongo.molecules, db_mongo.mfp_counts)
     similarity.AddRandPermutations(db_mongo.permutations)
     similarity.AddLocalityHashes(db_mongo.molecules, db_mongo.permutations, 25)
