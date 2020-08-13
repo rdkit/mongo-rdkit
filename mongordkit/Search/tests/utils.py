@@ -25,7 +25,7 @@ def similaritySearchPython(query_mol, molecules, threshold):
         mfp = list(AllChem.GetMorganFingerprintAsBitVect(Chem.Mol(mol['rdmol']), 2, nBits=2048).GetOnBits())
         tanimoto = calc_tanimoto(qfp, mfp)
         if calc_tanimoto(qfp, mfp) >= threshold:
-            results.append([tanimoto, mol['smiles']])
+            results.append([tanimoto, str(mol['index'])])
     return results
 
 
@@ -38,7 +38,7 @@ def SubSearchPython(pattern, molecules):
     for moldoc in molecules:
         mol = Chem.Mol(moldoc['rdmol'])
         if mol.HasSubstructMatch(pattern):
-            results.append(moldoc['smiles'])
+            results.append(moldoc['index'])
     return results
 
 

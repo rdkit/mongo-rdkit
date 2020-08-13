@@ -136,6 +136,7 @@ def test_similarity_accuracy_LSH(mongoURI):
     for t in thresholds:
         for i in range(200):
             mol = Chem.Mol(db_python[i]['rdmol'])
+            smiles = Chem.MolToSmiles(mol)
             search_python = [result[1] for result in utils.similaritySearchPython(mol, db_python, t)]
             search_mongo_LSH = [result[1] for result in
                                 similarity.SimSearchLSH(mol, db_mongo, db_mongo.molecules, db_mongo.permutations, t)]

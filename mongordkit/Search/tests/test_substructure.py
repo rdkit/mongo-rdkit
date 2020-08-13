@@ -9,7 +9,7 @@ def test_addPatternFingerprints():
     write.WriteFromSDF(db.molecules, 'data/test_data/first_200.props.sdf')
     substructure.AddPatternFingerprints(db.molecules)
     counter = 0
-    assert db.molecules.count_documents({"pattern_fp": {"$exists": True}}) == 200
+    assert db.molecules.count_documents({"fingerprints.pattern_fp": {"$exists": True}}) == 200
 
 
 def test_SubSearchAccuracy():

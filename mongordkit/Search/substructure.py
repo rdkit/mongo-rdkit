@@ -20,7 +20,7 @@ def SubSearchNaive(pattern, mol_collection, chirality=False):
     for molDoc in mol_collection.find():
         rdmol = Chem.Mol(molDoc['rdmol'])
         if rdmol.HasSubstructMatch(pattern, useChirality=chirality):
-            results.append(molDoc['smiles'])
+            results.append(molDoc['index'])
     return results
 
 
@@ -33,7 +33,7 @@ def AddPatternFingerprints(mol_collection):
         mol = Chem.Mol(moldoc['rdmol'])
         bit_vector = list(PatternFingerprint(mol).GetOnBits())
         count = len(bit_vector)
-        mol_collection.update_one({'_id': moldoc['_id']}, {'$set': {'pattern_fp': {'bits': bit_vector, 'count': count}}})
+        mol_collection.update_one({'_id': moldoc['_id']}, {'$set': {'fingerprints.pattern_fp': {'bits': bit_vector, 'count': count}}})
     return
 
 
@@ -49,14 +49,10 @@ def SubSearch(pattern, mol_collection, chirality=False):
     results = []
     query_fp = list(PatternFingerprint(pattern).GetOnBits())
     qfp_len = len(query_fp)
-    for molDoc in mol_collection.find({'pattern_fp.count': {'$gte': qfp_len},
-                                     'pattern_fp.bits': {'$all': query_fp}
+    for molDoc in mol_collection.find({'fingerprints.pattern_fp.count': {'$gte': qfp_len},
+                                     'fingerprints.pattern_fp.bits': {'$all': query_fp}
                                      }):
         rdmol = Chem.Mol(molDoc['rdmol'])
         if rdmol.HasSubstructMatch(pattern, useChirality=chirality):
-            results.append(molDoc['smiles'])
+            results.append(molDoc['index'])
     return results
-
-
-def SubSearchAggregate(pattern, db, chirality=False):
-    return
