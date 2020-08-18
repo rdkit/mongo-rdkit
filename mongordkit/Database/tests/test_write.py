@@ -32,7 +32,7 @@ class TestWrite:
         data_scheme = registration.MolDocScheme()
         data_scheme.set_index("CanonicalSmiles")
         assert 200 == write.WriteFromSDF(db.molecules, 'data/test_data/first_200.props.sdf', data_scheme)
-        data_scheme.set_index("MoleculeHashString")
+        data_scheme.set_index("inchi_standard")
         assert 200 == write.WriteFromSDF(db.molecules, 'data/test_data/first_200.props.sdf', data_scheme)
 
     def test_uniqueInsertion(self):
