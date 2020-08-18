@@ -139,7 +139,7 @@ def test_similarity_accuracy_LSH(mongoURI):
             smiles = Chem.MolToSmiles(mol)
             search_python = [result[1] for result in utils.similaritySearchPython(mol, db_python, t)]
             search_mongo_LSH = [result[1] for result in
-                                similarity.SimSearchLSH(mol, db_mongo, db_mongo.molecules, db_mongo.permutations, t)]
+                                similarity.SimSearchLSH(mol, db_mongo, db_mongo.molecules, db_mongo.permutations, db_mongo.mfp_counts, t)]
             assert set(search_mongo_LSH).issubset(search_python)
             print(counter)
             counter += 1

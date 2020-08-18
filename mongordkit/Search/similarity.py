@@ -210,7 +210,7 @@ def AddHashCollections(db, mol_collection):
                                                    {'$push': {'molecules': moldoc['_id']}}, True)
 
 
-def SimSearchLSH(mol, db, mol_collection, perm_collection, threshold=DEFAULT_THRESHOLD):
+def SimSearchLSH(mol, db, mol_collection, perm_collection, count_collection, threshold=DEFAULT_THRESHOLD):
     """
     Conducts a similarity search for query molecule MOL in MOL_COLLECTION
     with Tanimoto threshold THRESHOLD.
@@ -236,8 +236,8 @@ def SimSearchLSH(mol, db, mol_collection, perm_collection, threshold=DEFAULT_THR
     except ZeroDivisionError:
         fp_max = float('inf')
     req_common_count = qfp_count - fp_min + 1
-    if 'mfp' in db.list_collection_names():
-        req_common_bits = [count['_id'] for count in db.mfp_counts.find(
+    if count_collection:
+        req_common_bits = [count['_id'] for count in count_collection.find(
             {'_id': {'$in': qfp}}).sort('count', 1).limit(req_common_count)]
     else:
         req_common_bits = qfp[:req_common_count]

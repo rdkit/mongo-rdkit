@@ -14,10 +14,9 @@ DEFAULT_AUTHOR = 'package-native'
 DEFAULT_PREPROCESS = False
 DEFAULT_INDEX = 'inchikey_standard'
 
-
-RDKIT_HASH_FUNCTIONS = rdkit.Chem.rdMolHash.HashFunction.names
 HASH_FUNCTIONS = {}
-HASH_FUNCTIONS['MoleculeHashString'] = rdMolHash.GenerateMoleculeHashString
+for k, v in rdMolHash.HashFunction.names.items():
+    HASH_FUNCTIONS[k] = lambda rdmol, f=v: rdMolHash.MolHash(rdmol, f)
 HASH_FUNCTIONS['inchi_standard'] = Chem.MolToInchi
 HASH_FUNCTIONS['inchikey_standard'] = Chem.MolToInchiKey
 HASH_FUNCTIONS['inchi_KET_15T'] = lambda rdmol: Chem.MolToInchi(rdmol, options='-KET -15T')
@@ -33,7 +32,6 @@ class MolDocScheme():
         self.author = DEFAULT_AUTHOR
         self.pre_processed = DEFAULT_PREPROCESS
         self.index_option = DEFAULT_INDEX
-        self.rdkit_hashes = set(RDKIT_HASH_FUNCTIONS.keys())
         self.hashes = set(HASH_FUNCTIONS.keys())
         self.fingerprints = {}
         self.value_fields = {}
@@ -46,16 +44,15 @@ class MolDocScheme():
                '}'
 
     def set_index(self, new_index):
-        if new_index not in HASH_FUNCTIONS.keys() and new_index not in RDKIT_HASH_FUNCTIONS.keys():
+        if new_index not in HASH_FUNCTIONS.keys():
             raise Exception("Please add this hash first.")
         else:
             self.index_option = new_index
+        return
 
     def get_index_value(self, rdmol):
         if self.index_option in HASH_FUNCTIONS.keys():
             return HASH_FUNCTIONS[self.index_option](rdmol)
-        elif self.index_option in RDKIT_HASH_FUNCTIONS.keys():
-            return rdMolHash.MolHash(rdmol, RDKIT_HASH_FUNCTIONS[self.index_option])
         else:
             raise Exception("Specified index option does not exist.")
 
@@ -73,9 +70,6 @@ class MolDocScheme():
         if field_name in self.value_fields.keys():
             self.value_fields.pop(field_name)
             print(f'removed {field_name} from scheme')
-        if field_name in self.rdkit_hashes:
-            self.rdkit_hashes.remove(field_name)
-            print(f'removed {field_name} from scheme')
 
     def generate_mol_doc(self, rdmol):
         molDoc = {
@@ -84,8 +78,6 @@ class MolDocScheme():
             'smiles': Chem.MolToSmiles(rdmol),
             'scheme': self.scheme_name,
             'hashes': {hash_name: HASH_FUNCTIONS[hash_name](rdmol) for hash_name in self.hashes},
-            'rdkit_hashes': {hash_name: rdMolHash.MolHash(rdmol, RDKIT_HASH_FUNCTIONS[hash_name])
-                             for hash_name in self.rdkit_hashes},
             'fingerprints': {fp: fp_method(rdmol) for fp, fp_method in self.fingerprints.items()},
             'value_data': {field_name: value for field_name, value in self.value_fields.items()}
         }

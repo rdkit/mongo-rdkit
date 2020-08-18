@@ -1,13 +1,14 @@
 import pymongo, pickle
 from bson import Binary
 from rdkit import Chem
+import rdkit
 from rdkit.Chem import rdMolHash
 from rdkit.Chem import rdinchi
-from .registration import MolDocScheme, HASH_FUNCTIONS, RDKIT_HASH_FUNCTIONS
+from .registration import MolDocScheme, HASH_FUNCTIONS
 
 
 def WriteFromSDF(mol_collection, sdf, scheme=MolDocScheme(),
-                 reg_collection=None, chunk_size=100, limit=None):
+                 reg_collection=None, chunk_size=100, limit=None, warnings=False):
     """
     Writes the contents of SDF to MOL_COLLECTION and creates
     an index on the index specificed in SCHEME. Optional parameters:
@@ -22,14 +23,10 @@ def WriteFromSDF(mol_collection, sdf, scheme=MolDocScheme(),
     :param chunk_size: Integer indicating how many molecules inserted at a time.
     :param limit: Integer indicating how many molecules to insert.
     """
+    if not warnings:
+        rdkit.RDLogger.DisableLog('rdApp.*')
     molecules = mol_collection
     print('populating mongodb collection with compounds from SDF...')
-    # This is placeholder code for when more registration options exist.
-    # if index_option not in VALID_HASHES:
-    #     options = ', '.join(VALID_HASHES)
-    #     raise ValueError("index_option must be one of {}".format(options))
-    # else:
-    #     hash = HASH_FUNCTIONS[index_option]
     chunk = []
     inserted = 0
     duplicates = 0
@@ -81,12 +78,6 @@ def WriteFromMolList(mol_collection, list, scheme=MolDocScheme(),
     """
     molecules = mol_collection
     print('populating mongodb collection with compounds from list...')
-    # This is placeholder code for when more registration options exist.
-    # if index_option not in VALID_HASHES:
-    #     options = ', '.join(VALID_HASHES)
-    #     raise ValueError("index_option must be one of {}".format(options))
-    # else:
-    #     hash = HASH_FUNCTIONS[index_option]
     chunk = []
     inserted = 0
     duplicates = 0

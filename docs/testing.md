@@ -7,10 +7,15 @@ pip install -U pytest
 ```
 ## Running Tests
 While you are in the top-level directory (`/your path here/mongo-rdkit`),
-you can run all tests simply by opening a command line and running:
+you can run all tests on OS/Linux systems simply by opening a command line and running:
 ```
 pytest
 ```
+On Windows, you may have to run the following instead:
+```
+python -m pytest
+```
+
 Directory position is important because as of 7/10/20, 
 the tests have explicit file paths to test data in the `/data` directory.
 
@@ -20,6 +25,10 @@ MongoDB instance. In order to successfully run these tests, we have to pass in
 a MongoDB URI to the testing framework:
 ```
 pytest --server="YOUR_MONGO_URI"
+```
+On Windows: 
+```
+python -m pytest --server="YOUR_MONGO_URI"
 ```
 Passing in `"local"` will run the tests on your locally hosted MongoDB
 instance. 
