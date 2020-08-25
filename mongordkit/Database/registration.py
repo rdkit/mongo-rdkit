@@ -32,7 +32,7 @@ class MolDocScheme():
         self.author = DEFAULT_AUTHOR
         self.pre_processed = DEFAULT_PREPROCESS
         self.index_option = DEFAULT_INDEX
-        self.hashes = set(HASH_FUNCTIONS.keys())
+        self.hashes = {'CanonicalSmiles', 'inchikey_standard'}
         self.fingerprints = {}
         self.value_fields = {}
 
@@ -56,9 +56,16 @@ class MolDocScheme():
         else:
             raise Exception("Specified index option does not exist.")
 
-    def add_hash_field(self, field_name, field_method):
-        self.hashes.add(field_name)
-        HASH_FUNCTIONS[field_name] = field_method
+    def add_hash_field(self, field_name, field_method=None):
+        if field_name in HASH_FUNCTIONS:
+            self.hashes.add(field_name)
+        else:
+            HASH_FUNCTIONS[field_name] = field_method
+            self.hashes.add(field_name)
+
+    def add_all_hashes(self):
+        for function in HASH_FUNCTIONS.keys():
+            self.hashes.add(function)
 
     def add_value_field(self, field_name, field_value):
         self.value_fields[field_name] = field_value
