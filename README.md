@@ -16,7 +16,6 @@ Jupyter Notebooks and resources for getting started in the [docs](https://github
 folder on GitHub.
 
 ## Installation
-As the package is not officially configured with a setup.py file or pushed onto PyPi, these are working install instructions.
 
 ### macOS and Linux:
 Ensure that you have either Anaconda or Miniconda installed and that `conda` has been added to `PATH`.
@@ -33,14 +32,11 @@ Activate said conda environment:
 ```
 source activate mongo_rdkit
 ```
-Add the package mongo-rdkit to `PYTHONPATH`:
+Install a local copy of mongo-rdkit by running this from the same directory as `setup.py` (`mongo-rdkit` is not yet published to PyPI):
 ```
-export PYTHONPATH="$PWD"
+pip install -e .
 ```
-Check that `your/path/here/mongo-rdkit` lies in `PYTHONPATH`:
-```
-echo $PYTHONPATH
-```
+
 You can now `import mongordkit` in your Python interpreter or run all tests using the `pytest` command.
 
 ### Windows:
@@ -81,6 +77,7 @@ substructure and similarity search. Detailed walkthroughs can be found in the no
 - **azure_pipelines.yml**: CI/CD pipeline configurations.
 - **conftest.py**: `pytest` configurations.
 - **env.yml**: required dependencies.
+- **setup.py**: python package setup including pip dependencies
 
 ## License
 Code released under the BSD License.
