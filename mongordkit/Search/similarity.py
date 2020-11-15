@@ -19,6 +19,8 @@ DEFAULT_BUCKET_N = 25
 DEFAULT_PERM_LEN = 2048
 DEFAULT_PERM_N = 100
 
+# PyMongo configurations
+DEFAULT_BATCH_SIZE = 100
 
 def SimSearchNaive(mol, mol_collection, threshold=DEFAULT_THRESHOLD):
     """
@@ -52,7 +54,7 @@ def AddMorganFingerprints(mol_collection, count_collection):
     :param radius: Radius of the desired Morgan fingerprints. Defaults to 2.
     :param length: NBits in desired Morgan fingerprints. Defaults to 2048.
     """
-    for m in mol_collection.find():
+    for m in mol_collection.find(batch_size=DEFAULT_BATCH_SIZE):
         bit_vector = list((AllChem.GetMorganFingerprintAsBitVect(Chem.Mol(m['rdmol']),
                                                                  DEFAULT_MORGAN_RADIUS,
                                                                  nBits=DEFAULT_MORGAN_LEN).GetOnBits()))
@@ -60,7 +62,7 @@ def AddMorganFingerprints(mol_collection, count_collection):
         mol_collection.update_one({'_id': m['_id']}, {'$set': {'fingerprints.morgan_fp': {'bits': bit_vector,
                                                                            'count': count}}})
     counts = {}
-    for m in mol_collection.find():
+    for m in mol_collection.find(batch_size=DEFAULT_BATCH_SIZE):
         for bit in m['fingerprints']['morgan_fp']['bits']:
             counts[bit] = counts.get(bit, 0) + 1
     for k, v in counts.items():
@@ -184,12 +186,12 @@ def AddLocalityHashes(mol_collection, perm_collection, nBuckets=DEFAULT_BUCKET_N
     """
     length = len(perm_collection.find_one()['permutation'])
     permutations = []
-    for doc in perm_collection.find():
+    for doc in perm_collection.find(batch_size=DEFAULT_BATCH_SIZE):
         if len(doc['permutation']) != length:
             Exception('Permutations must split evenly into buckets')
             return
         permutations.append(doc['permutation'])
-    for moldoc in mol_collection.find():
+    for moldoc in mol_collection.find(batch_size=DEFAULT_BATCH_SIZE):
         mol = Chem.Mol(moldoc['rdmol'])
         min_hash = get_min_hash(mol, permutations)
         hash_groups = hash_to_buckets(min_hash, nBuckets, length)
@@ -203,7 +205,7 @@ def AddHashCollections(db, mol_collection):
     :param mol_collection: a MongoDB collection.
     :return: None
     """
-    for moldoc in mol_collection.find():
+    for moldoc in mol_collection.find(batch_size=DEFAULT_BATCH_SIZE):
         hash_groups = moldoc['LSH']
         for number, hash in enumerate(hash_groups):
             db['LSHash_' + str(number)].update_one({'_id': hash},
